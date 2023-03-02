@@ -17,10 +17,10 @@ def read_txt_to_list(txt_path):
     return list_data
 
 
-if __name__ == '__main__':
-    txt_path = "HSBC_Examples/TstUoB_2024-01-02LOBs.txt"
-    list_data = read_txt_to_list(txt_path)
-    print(list_data[0])
+txt_path = "HSBC_Examples/TstUoB_2024-01-02LOBs.txt"
+list_data = read_txt_to_list(txt_path)
+
+print(list_data[10:20])
 
 
 
