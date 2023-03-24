@@ -59,6 +59,8 @@ lobs_selected = get_lobs_by_tapes(tapes, lobs)
 
 # Save the selected LOBs to a csv file
 df_lobs_selected = pd.DataFrame(lobs_selected)
+# Name the columns
+df_lobs_selected.columns = ['bid_price', 'bid_volume', 'ask_price', 'ask_volume', 'timestamp']
 df_lobs_selected.to_csv("HSBC_Examples/TstUoB_2024-01-02LOBs_Selected.csv", index=False)
 
 

@@ -96,6 +96,12 @@ model.compile(optimizer='adam',
 model.fit(X_train_batch, y_train_batch, epochs=10, batch_size=batch_size)
 
 y_pred = model.predict(X_test_batch)
+print(y_pred)
+print(y_train_batch)
 classification_result(y_pred)
+
+# Save the model
+model.save('LSTM.h5')
+
 
 
