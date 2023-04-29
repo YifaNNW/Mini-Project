@@ -13,7 +13,7 @@ Downsample all LOBs datasets every ten seconds.
 - down sample datasets: CSV_10.zip
 
 ### 2023/04/29
-Extract more features based on existing results    
+Extract more features based on existing results:    
 | time   | bid_weighted_average | bid_high | bid_volumn | ask_weighted_average | ask_low | ask_volumn | mid_price | spread | bid_ask_ratio | Trend | rising | falling | stable |
 |--------|---------------------|----------|------------|---------------------|---------|------------|-----------|--------|---------------|-------|--------|---------|--------|
 | 18.941 | 203.3               | 253.02   | 45.52      | 411.28              | 259.14  | 19.49      | 256.08    | 6.13   | 2.36          | 1     | 1      | 0       | 0      |
@@ -22,7 +22,7 @@ Extract more features based on existing results
 | 49.073 | 227.44              | 257.12   | 46.51      | 403.56              | 260.47  | 17.8       | 258.79    | 3.35   | 2.63          | 1     | 1      | 0       | 0      |
 | 59.365 | 225.41              | 258.25   | 40         | 336.49              | 261.04  | 19.48      | 259.64    | 2.79   | 2.09          | 0     | 0      | 0       | 1      |
 
-- time: The time of the observation.  
+- time: The time of the observation, and the interval sets to 10s.
 - bid_weighted_average: The weighted average bid price.  
 - bid_high: The highest price a buyer is willing to pay for the stock.  
 - bid_volumn: The total number of shares that buyers are willing to buy at the corresponding bid price.  
