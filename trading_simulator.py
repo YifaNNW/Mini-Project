@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
-# Read the last 30% of the LOBs csv files from the CSV_10 folder
+# Read the last 30% of the LOBs csv files from the CSV_101 folder
 print('Loading the LOBs...')
 folder_path = "CSV_10"
 # get csv file from the folder
@@ -30,7 +30,7 @@ print("combined_df.shape: ", combined_df.shape)
 
 data_original = combined_df
 
-data_original = data_original.iloc[0:2000]
+# data_original = data_original.iloc[0:2000]
 
 data = data_original.values
 y = np.expand_dims(data[:, -1], axis=1)
@@ -53,7 +53,7 @@ capital = 1000000
 # Predict the mid_price movement for each batch
 steps = len(data_batch) - 1
 step = 0
-trading_num = 10
+
 shares_num = 100
 list_buy_sell_index = []
 last_mid_price = 0
@@ -74,29 +74,33 @@ for batch in data_batch:
     signal = y_pred[-1]
     print('signal: ', signal)
     # Get the mid_price of the last row
-    mid_price = data_original['mid_price'].iloc[step * batch_size + batch_size - 1]
-
+    # mid_price = data_original['mid_price'].iloc[step * batch_size + batch_size - 1]
+    ask_volume = data_original['ask_volumn'].iloc[step * batch_size + batch_size - 1]
+    ask_low = data_original['ask_low'].iloc[step * batch_size + batch_size - 1]
+    bid_volume = data_original['bid_volumn'].iloc[step * batch_size + batch_size - 1]
+    bid_high = data_original['bid_high'].iloc[step * batch_size + batch_size - 1]
     # If the signal is 1, buy 10 shares
-    if signal == 1 and capital >= mid_price * trading_num:
-        print('Buy 10 shares at ', mid_price)
-        shares_num += trading_num
-        capital -= mid_price * trading_num
-        list_buy_sell_index.append((step * batch_size + batch_size - 1, 'buy', mid_price))
+    if signal == 1 and capital >= ask_low * ask_volume:
+
+        print('Buy {} shares at {}'.format(ask_volume, ask_low))
+        shares_num += ask_volume
+        capital -= ask_low * ask_volume
+        list_buy_sell_index.append((step * batch_size + batch_size - 1, 'buy', ask_low))
     # If the signal is 0, sell 100 shares
-    elif signal == 2 and shares_num >= trading_num:
-        # print('Sell 10 shares at ', mid_price)
-        # shares_num -= trading_num
-        # capital += mid_price * trading_num
+    elif signal == 2 and shares_num >= bid_volume:
+        print('Sell {} shares at {}'.format(bid_volume, bid_high) )
+        shares_num -= bid_volume
+        capital += bid_high * bid_volume
+        list_buy_sell_index.append((step * batch_size + batch_size - 1, 'sell', bid_high))
+
+        # # sell all shares
+        # print('Sell all shares at ', mid_price)
+        # capital += mid_price * shares_num
+        # shares_num = 0
         # list_buy_sell_index.append((step * batch_size + batch_size - 1, 'sell', mid_price))
 
-        # sell all shares
-        print('Sell all shares at ', mid_price)
-        capital += mid_price * shares_num
-        shares_num = 0
-        list_buy_sell_index.append((step * batch_size + batch_size - 1, 'sell', mid_price))
-
     else:
-        print('Hold at ', mid_price)
+        print('Hold at ', ask_low)
 
     print('step: ', step, '/', steps)
     print('capital: ', capital)
@@ -106,21 +110,29 @@ for batch in data_batch:
 # Calculate the final capital
 final_capital = capital + last_mid_price * shares_num
 print('final_capital: ', final_capital)
+left = 10000
+right = 10300
+# Plot the 10000-10500 mid_price,ask_low,bid_high and the buy/sell points
+plt.plot(data_original['mid_price'].iloc[left:right], label='mid_price')
+plt.plot(data_original['ask_low'].iloc[left:right], label='ask_low')
+plt.plot(data_original['bid_high'].iloc[left:right], label='bid_high')
 
-# Plot the first 1000 mid_price and the buy/sell points
-plt.plot(data_original['mid_price'].iloc[:1000], label='mid_price')
-for index, buy_sell, mid_price in list_buy_sell_index:
-    if index < 1000:
-        if buy_sell == 'buy':
-            plt.scatter(index, mid_price, c="green", zorder=3)
+# Plot the (10000,10500) buy/sell points
+# Plot the (10000,10500) buy/sell points
+for index, action, price in list_buy_sell_index:
+    if left <= index < right:
+        if action == 'buy':
+            plt.plot(index - left, price, 'go')
         else:
-            plt.scatter(index, mid_price, c='red', zorder=3)
+            plt.plot(index - left, price, 'ro')
 
 green_circle = mlines.Line2D([], [], color='green', marker='o', linestyle='None', label='buy')
 red_circle = mlines.Line2D([], [], color='red', marker='o', linestyle='None', label='sell')
 mid_price_line = mlines.Line2D([], [], color='blue', label='mid_price')
+bid_high_line = mlines.Line2D([], [], color='orange', label='bid_high')
+ask_low_line = mlines.Line2D([], [], color='green', label='ask_low')
 
-plt.legend(handles=[mid_price_line, green_circle, red_circle])
+plt.legend(handles=[mid_price_line, bid_high_line, ask_low_line, green_circle, red_circle])
 
 plt.show()
 

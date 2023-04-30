@@ -7,7 +7,7 @@ from keras import Input
 from keras.layers import Dense, TimeDistributed
 from keras.utils.np_utils import *
 from sklearn.metrics import classification_report, accuracy_score
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import label_binarize
 
@@ -27,8 +27,8 @@ percentage = 0.7
 # data['price_movement'] = np.where(data['next_mid_price'] > data['mid_price'], 1, 0)
 # data.drop(['next_mid_price'], axis=1, inplace=True)
 
-# Read the first 70% of the LOBs csv files from the CSV_10 folder
-print("Reading the first 70% of the LOBs csv files from the CSV_10 folder...")
+# Read the first 70% of the LOBs csv files from the CSV_101 folder
+print("Reading the first 70% of the LOBs csv files from the CSV_101 folder...")
 folder_path = "CSV_10"
 # get csv file from the folder
 csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
@@ -51,10 +51,13 @@ combined_df = pd.concat(dataframes, ignore_index=True)
 # remove the "rising", "falling" and "stable" columns
 combined_df.drop(['rising', 'falling', 'stable'], axis=1, inplace=True)
 print("combined_df.shape: ", combined_df.shape)
+# move 'mid_price' to the last column
 
+print("combined_df.column: ", combined_df.columns)
 # print(data.shape)
 # print(data.columns)
 data = combined_df.values
+
 y = np.expand_dims(data[:, -1], axis=1)
 X = data[:, :-1]
 
